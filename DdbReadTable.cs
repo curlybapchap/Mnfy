@@ -4,6 +4,8 @@ using Amazon.DynamoDBv2.Model;
 using Amazon.DynamoDBv2.DocumentModel;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
+using Amazon.Runtime;
+using Amazon;
 
 namespace Mnfy
 {
@@ -20,6 +22,10 @@ namespace Mnfy
 
         public static async Task<bool> ReadingItem(string key, bool report)
         {
+
+            DynaDB.Client = new AmazonDynamoDBClient(new StoredProfileAWSCredentials("default"), RegionEndpoint.EUWest1);
+            DynaDB.urlsTable = Table.LoadTable(DynaDB.Client, "MnfyUrls");
+
             operationSucceeded = false;
             operationFailed = false;
             try

@@ -21,13 +21,32 @@ namespace Mnfy
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.Use(async (context, next) =>
+            {
+                var url = context.Request.Path.Value;
+                if (url.Contains("/get"))
+                {
+                    if (context.Request.QueryString.HasValue)
+                    {
+                        var test = await new UrlFinder().GetURL(context.Request.Query["u"].ToString());
+                        context.Response.Redirect(test);
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                await next();
+            });
 
             app.UseHttpsRedirection();
 

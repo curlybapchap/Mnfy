@@ -3,10 +3,6 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mnfy.Controllers
@@ -26,27 +22,6 @@ namespace Mnfy.Controllers
         {
             var newKey = await DynaDB.CreateAndStore(longUrl);
             return newKey;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> Get(string u)
-        {
-            var longURL = "";
-            RedirectResult redirectResult;
-            if (u != null)
-            {
-                var found = await DynaDB.ReadingItem(u, false);
-                if (found)
-                {
-                    var toJSON = DynaDB.mnfyUrlRecord.ToJson();
-                    var obj = JsonSerializer.Deserialize<MnfyUrl>(toJSON);
-                    longURL = obj.LongURL;
-                    redirectResult = new RedirectResult(obj.LongURL, false);
-                    return redirectResult;
-                }
-            }
-            redirectResult = new RedirectResult(longURL, false);
-            return redirectResult;
         }
     }
 }
